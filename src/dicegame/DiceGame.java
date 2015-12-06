@@ -4,21 +4,44 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-
 public class DiceGame {
+    
+    EventQueue events = new EventQueue();
 
     public static void main(String[] args) {
         
+        DiceGame game = new DiceGame();
+        game.events.subscribe(new Observer(){
+
+            @Override
+            public boolean canHandle(Object event) {
+                return event instanceof DieKeptEvent;
+            }
+
+            @Override
+            public void handle(Object event) {
+                DieKeptEvent e = (DieKeptEvent) event;
+                System.out.println(e.player + " " + e.dieNumber);
+            }
+            
+        });
+        
         JFrame mainFrame = new JFrame("Dice Game");
-        JPanel mainPanel = new JPanel();
+        JPanel mainPanel = game.makeMainPanel();
         mainFrame.setContentPane(mainPanel);
+        
+        mainFrame.addWindowListener(new WindowClosesApplication());
+        
+        mainFrame.setSize(800, 600);
+        mainFrame.setVisible(true);
+    }
+
+    private JPanel makeMainPanel() {
+        
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.white);
-        
-        DiceGame game = new DiceGame();
-        
         Player[] allPlayers = new Player[]{Player.COMPUTER, Player.HUMAN};
-        
         for (int row = 0; row < allPlayers.length; row++) {
             
             //making the left column (player names)
@@ -36,7 +59,7 @@ public class DiceGame {
             mainPanel.add(playerName, playerNameConstraints);
             
             //making the right column (rows of dice)
-            JPanel dieLayout = game.makeDiceRow(allPlayers[row]);
+            JPanel dieLayout = this.makeDiceRow(allPlayers[row]);
             
             //grid setting of the die cell
             GridBagConstraints dieLayoutConstraints = new GridBagConstraints();
@@ -48,15 +71,12 @@ public class DiceGame {
 
             mainPanel.add(dieLayout, dieLayoutConstraints);
         }
-        
-        mainFrame.addWindowListener(new WindowClosesApplication());
-        
-        mainFrame.setSize(800, 600);
-        mainFrame.setVisible(true);
+        return mainPanel;
     }
 
     //make a row of 5 dice with checkboxes
     private JPanel makeDiceRow(Player player) {
+        
         JPanel dieLayout = new JPanel();
         dieLayout.setLayout(new FlowLayout());
         for (int i = 1; i <= 5; i++) {
@@ -82,7 +102,7 @@ public class DiceGame {
     private JPanel dieFace(Player player, int dieNumber) {
         
         JCheckBox singleCheck = new JCheckBox();
-        singleCheck.addActionListener(new CheckBoxListener(player, dieNumber));
+        singleCheck.addActionListener(new CheckBoxListener(player, dieNumber, events));
         JPanel checkContainer = new JPanel();
         checkContainer.setLayout(new FlowLayout());
         checkContainer.add(singleCheck);
