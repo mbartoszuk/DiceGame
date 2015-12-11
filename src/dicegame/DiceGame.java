@@ -1,5 +1,9 @@
 package dicegame;
 
+/**
+ * @author Maria Bartoszuk, w1510769
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -7,6 +11,8 @@ import javax.swing.*;
 public class DiceGame {
     
     EventQueue events = new EventQueue();
+    JLabel[] humanDice = new JLabel[5];
+    JLabel[] computerDice = new JLabel[5];
 
     public static void main(String[] args) {
         
@@ -32,8 +38,9 @@ public class DiceGame {
         
         mainFrame.addWindowListener(new WindowClosesApplication());
         
-        mainFrame.setSize(800, 600);
+        mainFrame.setSize(1000, 500);
         mainFrame.setVisible(true);
+        
     }
 
     private JPanel makeMainPanel() {
@@ -68,18 +75,74 @@ public class DiceGame {
             dieLayoutConstraints.fill = GridBagConstraints.HORIZONTAL;
             dieLayoutConstraints.gridx = 1;
             dieLayoutConstraints.gridy = row;
-
+            
             mainPanel.add(dieLayout, dieLayoutConstraints);
+            
         }
+        
+        //grid settings of the aside
+        GridBagConstraints asideConstraints = new GridBagConstraints();
+        asideConstraints.insets = new Insets(10, 10, 10, 10);
+        asideConstraints.weightx = 0;
+        asideConstraints.weighty = 0.5;
+        asideConstraints.fill = GridBagConstraints.VERTICAL;
+        asideConstraints.gridx = 2;
+        asideConstraints.gridy = 0;
+        asideConstraints.gridheight = 2;
+        
+        //making the aside with buttons
+        mainPanel.add(makeAside(), asideConstraints);
+        
         return mainPanel;
+        
+    }
+
+    private JPanel makeAside() {
+        
+        JPanel target = new JPanel();
+        target.setLayout(new FlowLayout());
+        
+        //adding target value label
+        JLabel targetLabel = new JLabel("Target Value: ");
+        target.add(targetLabel);
+        
+        //adding target value input box
+        JTextField targetValue = new JTextField("101");
+        target.add(targetValue);
+        
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
+        
+        buttons.add(target);
+        
+        //adding the throw button
+        JButton throwButton = new JButton("Throw dice");
+        buttons.add(throwButton);
+        throwButton.addActionListener(new Thrower(this, new Dice()));
+        
+        //adding the score button
+        JButton scoreButton = new JButton("Score displayed points");
+        buttons.add(scoreButton);
+        
+        JPanel aside = new JPanel();
+        aside.setLayout(new BorderLayout());
+        
+        aside.add(buttons, "North");
+        
+        //adding the new game button
+        JButton newGameButton = new JButton("Start new game");
+        aside.add(newGameButton, "South");
+        
+        return aside;
+        
     }
 
     //make a row of 5 dice with checkboxes
     private JPanel makeDiceRow(Player player) {
         
         JPanel dieLayout = new JPanel();
-        dieLayout.setLayout(new FlowLayout());
-        for (int i = 1; i <= 5; i++) {
+        dieLayout.setLayout(new BoxLayout(dieLayout, BoxLayout.X_AXIS));
+        for (int i = 0; i < 5; i++) {
             dieLayout.add(dieFace(player, i));
         }
         
@@ -96,18 +159,23 @@ public class DiceGame {
         row.add(totalPlayerScoreContainer);
         
         return row;
+        
     }
     
     //pair an individual die with its corresponding checkbox
     private JPanel dieFace(Player player, int dieNumber) {
         
         JCheckBox singleCheck = new JCheckBox();
-        singleCheck.addActionListener(new CheckBoxListener(player, dieNumber, events));
         JPanel checkContainer = new JPanel();
         checkContainer.setLayout(new FlowLayout());
         checkContainer.add(singleCheck);
         
         JLabel singleDie = new JLabel();
+        if (player == Player.HUMAN) {
+            humanDice[dieNumber] = singleDie;
+        } else {
+            computerDice[dieNumber] = singleDie;
+        }
         singleDie.setIcon(new ImageIcon(DiceGame.class.getResource("/die1.png")));
         JPanel dieContainer = new JPanel();
         dieContainer.setLayout(new FlowLayout());
@@ -118,5 +186,23 @@ public class DiceGame {
         die.add(checkContainer);
         die.add(dieContainer);
         return die;
+        
+    }
+    
+    public void setDieFaces(Die[] rolledFaces, Player player) {
+        
+        for (int i = 0; i < 5; i++) {
+            JLabel rolledDieNumber;
+            if (player == Player.HUMAN) {
+                rolledDieNumber = humanDice[i];
+            } else { //player == Player.COMPUTER
+                rolledDieNumber = computerDice[i];
+            }
+            
+            Die rolledDieFace = rolledFaces[i];
+            ImageIcon rolledDieImage = rolledDieFace.getDieImage();
+            rolledDieNumber.setIcon(rolledDieImage);
+        }
+        
     }
 }

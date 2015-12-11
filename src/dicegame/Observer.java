@@ -1,8 +1,7 @@
 package dicegame;
 
 /**
- *
- * @author Maria
+ * @author Maria Bartoszuk, w1510769
  */
 
 public interface Observer {

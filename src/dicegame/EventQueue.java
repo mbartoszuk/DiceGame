@@ -3,8 +3,7 @@ package dicegame;
 import java.util.ArrayList;
 
 /**
- *
- * @author Maria
+ * @author Maria Bartoszuk, w1510769
  */
 
 public class EventQueue {

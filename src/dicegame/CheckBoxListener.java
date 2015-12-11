@@ -5,8 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 
 /**
- *
- * @author Maria
+ * @author Maria Bartoszuk, w1510769
  */
 
 class CheckBoxListener implements ActionListener {
