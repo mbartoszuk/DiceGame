@@ -8,6 +8,8 @@ import javax.swing.ImageIcon;
 
 public class Die implements DieIntf, Comparable<DieIntf> {
     
+    public static final int FACESNUMBER = 6;  // Each die has 6 faces
+    
     ImageIcon dieFace;
     int dieValue;
 
@@ -31,6 +33,7 @@ public class Die implements DieIntf, Comparable<DieIntf> {
         return dieValue;
     }
 
+    /** Comparison by die value. Lower value is less than higher value. */
     @Override
     public int compareTo(DieIntf other) {
         if (this.getValue() < other.getValue()) {

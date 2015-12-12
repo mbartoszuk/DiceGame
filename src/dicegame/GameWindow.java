@@ -1,14 +1,14 @@
 package dicegame;
 
-/**
- * @author Maria Bartoszuk, w1510769
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class DiceGame {
+/**
+ * @author Maria Bartoszuk, w1510769
+ */
+
+public class GameWindow {
     
     JLabel[] humanDice = new JLabel[5];
     JLabel[] computerDice = new JLabel[5];
@@ -17,10 +17,13 @@ public class DiceGame {
     
     GameState humanState = new GameState();
     GameState computerState = new GameState();
+    
+    JCheckBox[] humanCheckBoxes = new JCheckBox[5];
+    JCheckBox[] computerCheckBoxes = new JCheckBox[5];
 
     public static void main(String[] args) {
         
-        DiceGame game = new DiceGame();
+        GameWindow game = new GameWindow();
         
         JFrame mainFrame = new JFrame("Dice Game");
         JPanel mainPanel = game.makeMainPanel();
@@ -134,7 +137,7 @@ public class DiceGame {
         JPanel dieLayout = new JPanel();
         dieLayout.setLayout(new BoxLayout(dieLayout, BoxLayout.X_AXIS));
         for (int i = 0; i < 5; i++) {
-            dieLayout.add(dieFace(player, i));
+            dieLayout.add(makeDieFace(player, i));
         }
         
         JLabel totalPlayerScore = new JLabel();
@@ -160,9 +163,23 @@ public class DiceGame {
     }
     
     //pair an individual die with its corresponding checkbox
-    private JPanel dieFace(Player player, int dieNumber) {
+    private JPanel makeDieFace(Player player, int dieNumber) {
         
         JCheckBox singleCheck = new JCheckBox();
+        GameState state;
+        if (player == Player.HUMAN) {
+            state = humanState;
+        } else { 
+            state = computerState;
+        }
+        
+        singleCheck.addActionListener(new DiceTracker(this, state, dieNumber));
+        if (player == Player.HUMAN) {
+            humanCheckBoxes[dieNumber] = singleCheck;
+        } else {
+            computerCheckBoxes[dieNumber] = singleCheck;
+        }
+        
         JPanel checkContainer = new JPanel();
         checkContainer.setLayout(new FlowLayout());
         checkContainer.add(singleCheck);
@@ -173,7 +190,7 @@ public class DiceGame {
         } else {
             computerDice[dieNumber] = singleDie;
         }
-        singleDie.setIcon(new ImageIcon(DiceGame.class.getResource("/die1.png")));
+        singleDie.setIcon(new ImageIcon(GameWindow.class.getResource("/die1.png")));
         JPanel dieContainer = new JPanel();
         dieContainer.setLayout(new FlowLayout());
         dieContainer.add(singleDie);
@@ -184,6 +201,26 @@ public class DiceGame {
         die.add(dieContainer);
         return die;
         
+    }
+
+    /** Making the interface look like the current state of the game. */
+    public void refreshInterface() {
+        
+        this.setDieFaces(humanState.getCurrentDice(), Player.HUMAN);
+        this.setDieFaces(computerState.getCurrentDice(), Player.COMPUTER);
+        
+        int currentScoreHuman = humanState.getCurrentScore();
+        int currentScoreComputer = computerState.getCurrentScore();
+        
+        this.humanTotalScore.setText("Total score: " + currentScoreHuman + " points");
+        this.computerTotalScore.setText("Total score: " + currentScoreComputer + " points");
+        
+        for (int i = 0; i < 5; i++) {
+            boolean checked = humanState.isDiceKept(i);
+            JCheckBox checkbox = humanCheckBoxes[i];
+            checkbox.setSelected(checked);
+        }
+ 
     }
     
     private void setDieFaces(Die[] rolledFaces, Player player) {
@@ -201,19 +238,5 @@ public class DiceGame {
             rolledDieNumber.setIcon(rolledDieImage);
         }
         
-    }
-
-    /** Making the interface look like the current state of the game. */
-    public void refreshInterface() {
-        
-        this.setDieFaces(humanState.getCurrentDice(), Player.HUMAN);
-        this.setDieFaces(computerState.getCurrentDice(), Player.COMPUTER);
-        
-        int currentScoreHuman = humanState.getCurrentScore();
-        int currentScoreComputer = computerState.getCurrentScore();
-        
-        this.humanTotalScore.setText("Total score: " + currentScoreHuman + " points");
-        this.computerTotalScore.setText("Total score: " + currentScoreComputer + " points");
- 
     }
 }
