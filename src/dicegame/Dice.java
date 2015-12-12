@@ -12,7 +12,7 @@ public class Dice {
     public static final int DICENUMBER = 5;
     
     /**
-     * Every dieN attribute represents single die face and is used whenever
+     * Every die attribute represents single die face and is used whenever
      * this die face is a result of a particular roll.
      */
     Die die1 = new Die();

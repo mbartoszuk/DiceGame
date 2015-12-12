@@ -8,6 +8,11 @@ import javax.swing.*;
  * @author Maria Bartoszuk, w1510769
  */
 
+/**
+ * This class composes the interface that the user interacts with. It has different
+ * parts to it which contain various components and place those components
+ * in specific places on the interface.
+ */
 public class GameWindow implements Reseter {
     
     JLabel[] humanDice = new JLabel[5];
@@ -21,6 +26,9 @@ public class GameWindow implements Reseter {
     JCheckBox[] humanCheckBoxes = new JCheckBox[5];
     JCheckBox[] computerCheckBoxes = new JCheckBox[5];
     
+    JLabel humanGamesWon;
+    JLabel computerGamesWon;
+    
     JFrame mainFrame;
     
     ComputerPlayer computer;
@@ -30,11 +38,14 @@ public class GameWindow implements Reseter {
     GameWindow() {
         computer = new ComputerPlayer(computerState, this);
         humanState.setComputer(computer);
+        tracker.load();
     }
 
+    /** Main function of the whole program. */
     public static void main(String[] args) {
         GameWindow game = new GameWindow();
         game.showFrame();
+        game.refreshInterface();
     }
     
     private void showFrame() {
@@ -42,20 +53,27 @@ public class GameWindow implements Reseter {
         JPanel mainPanel = this.makeMainPanel();
         mainFrame.setContentPane(mainPanel);
         
-        mainFrame.addWindowListener(new WindowClosesApplication());
+        mainFrame.addWindowListener(new WindowClosesApplication(tracker));
         
-        mainFrame.setSize(1000, 500);
+        mainFrame.setSize(1000, 400);
         mainFrame.setVisible(true);
     }
 
+    /** Makes the main panel with the names of players, dice and check boxes.*/
     private JPanel makeMainPanel() {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.white);
         Player[] allPlayers = new Player[]{Player.COMPUTER, Player.HUMAN};
-        for (int row = 0; row < allPlayers.length; row++) {  
+        for (int row = 0; row < allPlayers.length; row++) { 
+            
             //making the left column (player names)
             JLabel playerName = new JLabel();
+            if (allPlayers[row] == Player.HUMAN) {
+                this.humanGamesWon = playerName;
+            } else if (allPlayers[row] == Player.COMPUTER) {
+                this.computerGamesWon = playerName;
+            }
             playerName.setText(allPlayers[row].name());
             
             //grid setting of the name cell
@@ -98,6 +116,7 @@ public class GameWindow implements Reseter {
         return mainPanel;
     }
 
+    /** Makes the panel on the right with all the action buttons. */
     private JPanel makeAside() {   
         JPanel target = new JPanel();
         target.setLayout(new FlowLayout());
@@ -107,8 +126,11 @@ public class GameWindow implements Reseter {
         target.add(targetLabel);
         
         //adding target value input box
-        JTextField targetValue = new JTextField("101");
+        JTextField targetValue = new JTextField(
+                String.valueOf(ScoreTracker.DEFAULT_TARGET_VALUE), 5);
         target.add(targetValue);
+        targetValue.addActionListener(tracker);
+        targetValue.addFocusListener(tracker);
         
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
@@ -138,7 +160,7 @@ public class GameWindow implements Reseter {
         return aside;
     }
 
-    //make a row of 5 dice with checkboxes
+    /** Makes a row of 5 dice with the check boxes. */
     private JPanel makeDiceRow(Player player) {
         JPanel dieLayout = new JPanel();
         dieLayout.setLayout(new BoxLayout(dieLayout, BoxLayout.X_AXIS));
@@ -167,7 +189,7 @@ public class GameWindow implements Reseter {
         return row;
     }
     
-    //pair an individual die with its corresponding checkbox
+    /** Pairs an individual die with its corresponding check box. */
     private JPanel makeDieFace(Player player, int dieNumber) {
         JCheckBox singleCheck = new JCheckBox();
         GameState state;
@@ -206,7 +228,7 @@ public class GameWindow implements Reseter {
         return die;
     }
 
-    /** Making the interface look like the current state of the game. */
+    /** Makes the interface look like the current state of the game. */
     public void refreshInterface() {
         this.setDieFaces(humanState.getCurrentDice(), Player.HUMAN);
         this.setDieFaces(computerState.getCurrentDice(), Player.COMPUTER);
@@ -227,12 +249,20 @@ public class GameWindow implements Reseter {
         Player winner = this.tracker.getWinner();
         if (winner == Player.HUMAN) {
             JOptionPane.showMessageDialog(mainFrame, "You win!");
+            tracker.gameFinished();
         }
         if (winner == Player.COMPUTER) {
             JOptionPane.showMessageDialog(mainFrame, "You loose.");
+            tracker.gameFinished();
         }
+        
+        this.humanGamesWon.setText(Player.HUMAN.name() + " : "
+                + tracker.getHumanGamesWon());
+        this.computerGamesWon.setText(Player.COMPUTER.name() + " : "
+                + tracker.getComputerGamesWon());
     }
     
+    /** Sets the die images to the interface, so that they correspond with their values. */
     private void setDieFaces(Die[] rolledFaces, Player player) { 
         for (int i = 0; i < 5; i++) {
             JLabel rolledDieNumber;
@@ -248,6 +278,7 @@ public class GameWindow implements Reseter {
         } 
     }
 
+    /** Resets the interface to its initial state. */
     @Override
     public void reset() {
         this.refreshInterface();

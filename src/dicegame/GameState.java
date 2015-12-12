@@ -1,5 +1,7 @@
 package dicegame;
 
+import java.io.File;
+
 /**
  * @author Maria Bartoszuk, w1510769
  */
@@ -37,6 +39,10 @@ public class GameState implements Reseter {
      * i.e. not re-rolled.
      */
     boolean[] keepDecision = new boolean[Dice.DICENUMBER];
+    
+    GameState() {
+        reset();
+    }
     
     /**
      * If this is a human game state, we notify computer player to act
@@ -111,22 +117,19 @@ public class GameState implements Reseter {
         return this.keepDecision[dieIndex];
     }
     
-    /**
-     * Lets the player to keep the dice in the re-rolls if checked.
-     */
+    /** Lets the player to keep the dice in the re-rolls if checked. */
     public void keepDice(int dieIndex) {
         if (howManyRolls > 0) {
             this.keepDecision[dieIndex] = true;
         }
     }
     
-    /**
-     * Lets the player to re-roll the dice if unchecked.
-     */
+    /** Lets the player to re-roll the dice if unchecked. */
     public void dontKeepDice(int dieIndex) {
         this.keepDecision[dieIndex] = false;
     }
     
+    /** Checks if there were any rolls in the current turn already. */
     public boolean alreadyRolled() {
         if (howManyRolls > 0) {
             return true;
@@ -134,16 +137,21 @@ public class GameState implements Reseter {
         return false;
     }
     
+    /** Return the number of rolls in the current turn.
+     * 3 rolls are regular, 1 roll for ties.
+     */
     public int getMaxRolls() {
         return maxRolls;
     }
     
+    /** Changes the number of available rolls for the purpose of a tie. */
     public void tie() {
         this.maxRolls = MAXROLLS_WHEN_TIE;
     }
     
+    /** Resets all the game attributes and arrays to initial states. */
     @Override
-    public void reset() {
+    public final void reset() {
         this.currentScore = 0;
         for (int i = 0; i < currentDice.length; i++) {
             currentDice[i] = Die.BLANKDIE;
