@@ -21,8 +21,12 @@ public class GameWindow {
     JCheckBox[] humanCheckBoxes = new JCheckBox[5];
     JCheckBox[] computerCheckBoxes = new JCheckBox[5];
 
+    GameWindow() {
+        ComputerPlayer computer = new ComputerPlayer(computerState, this);
+        humanState.setComputer(computer);
+    }
+
     public static void main(String[] args) {
-        
         GameWindow game = new GameWindow();
         
         JFrame mainFrame = new JFrame("Dice Game");
@@ -33,17 +37,14 @@ public class GameWindow {
         
         mainFrame.setSize(1000, 500);
         mainFrame.setVisible(true);
-        
     }
 
     private JPanel makeMainPanel() {
-        
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBackground(Color.white);
         Player[] allPlayers = new Player[]{Player.COMPUTER, Player.HUMAN};
-        for (int row = 0; row < allPlayers.length; row++) {
-            
+        for (int row = 0; row < allPlayers.length; row++) {  
             //making the left column (player names)
             JLabel playerName = new JLabel();
             playerName.setText(allPlayers[row].name());
@@ -70,7 +71,6 @@ public class GameWindow {
             dieLayoutConstraints.gridy = row;
             
             mainPanel.add(dieLayout, dieLayoutConstraints);
-            
         }
         
         //grid settings of the aside
@@ -87,11 +87,9 @@ public class GameWindow {
         mainPanel.add(makeAside(), asideConstraints);
         
         return mainPanel;
-        
     }
 
-    private JPanel makeAside() {
-        
+    private JPanel makeAside() {   
         JPanel target = new JPanel();
         target.setLayout(new FlowLayout());
         
@@ -111,7 +109,7 @@ public class GameWindow {
         //adding the throw button
         JButton throwButton = new JButton("Throw dice");
         buttons.add(throwButton);
-        throwButton.addActionListener(new Thrower(this, humanState, computerState));
+        throwButton.addActionListener(new Thrower(this, humanState));
         
         //adding the score button
         JButton scoreButton = new JButton("Score displayed points");
@@ -128,12 +126,10 @@ public class GameWindow {
         aside.add(newGameButton, "South");
         
         return aside;
-        
     }
 
     //make a row of 5 dice with checkboxes
     private JPanel makeDiceRow(Player player) {
-        
         JPanel dieLayout = new JPanel();
         dieLayout.setLayout(new BoxLayout(dieLayout, BoxLayout.X_AXIS));
         for (int i = 0; i < 5; i++) {
@@ -159,12 +155,10 @@ public class GameWindow {
         }
         
         return row;
-        
     }
     
     //pair an individual die with its corresponding checkbox
     private JPanel makeDieFace(Player player, int dieNumber) {
-        
         JCheckBox singleCheck = new JCheckBox();
         GameState state;
         if (player == Player.HUMAN) {
@@ -200,12 +194,10 @@ public class GameWindow {
         die.add(checkContainer);
         die.add(dieContainer);
         return die;
-        
     }
 
     /** Making the interface look like the current state of the game. */
     public void refreshInterface() {
-        
         this.setDieFaces(humanState.getCurrentDice(), Player.HUMAN);
         this.setDieFaces(computerState.getCurrentDice(), Player.COMPUTER);
         
@@ -220,11 +212,9 @@ public class GameWindow {
             JCheckBox checkbox = humanCheckBoxes[i];
             checkbox.setSelected(checked);
         }
- 
     }
     
-    private void setDieFaces(Die[] rolledFaces, Player player) {
-        
+    private void setDieFaces(Die[] rolledFaces, Player player) { 
         for (int i = 0; i < 5; i++) {
             JLabel rolledDieNumber;
             if (player == Player.HUMAN) {
@@ -236,7 +226,6 @@ public class GameWindow {
             Die rolledDieFace = rolledFaces[i];
             ImageIcon rolledDieImage = rolledDieFace.getDieImage();
             rolledDieNumber.setIcon(rolledDieImage);
-        }
-        
+        } 
     }
 }

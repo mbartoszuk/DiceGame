@@ -11,7 +11,7 @@ package dicegame;
 public class GameState {
     
     /** How many rolls are allowed (first roll + re-rolls) in a single turn. */
-    private static final int MAXROLLS = 3;
+    public static final int MAXROLLS = 3;
     
     /** Current score of the player tracked by this state. */
     int currentScore = 0;
@@ -34,6 +34,17 @@ public class GameState {
      */
     boolean[] keepDecision = new boolean[Dice.DICENUMBER];
     
+    /**
+     * If this is a human game state, we notify computer player to act
+     * on certain actions of the human. For example to finish the turn when
+     * human updates the score.
+     */
+    ComputerPlayer computer = null;
+    
+    public void setComputer(ComputerPlayer computer) {
+        this.computer = computer;
+    }
+    
     /** The dice currently displayed for this player. */
     public Die[] getCurrentDice() {
         return this.currentDice;
@@ -46,6 +57,12 @@ public class GameState {
      */
     public void rollDice() {
         Die[] newRoll = new Dice().roll();
+        
+        if (howManyRolls == 0) {  // If it's the first roll of the human,
+            if (computer != null) {
+                computer.rollDice();  // the computer also rolls the dice.
+            }
+        }
         
         if (howManyRolls < MAXROLLS) {
             for (int i = 0; i < newRoll.length; i++) {
@@ -72,6 +89,10 @@ public class GameState {
      * Updates the current score by the new dice values.
      */
     public void updateCurrentScore() {
+        if (computer != null) {
+            computer.completeTurn();
+        }
+        
         if (howManyRolls > 0) {
             for(Die die : currentDice) {
                 this.currentScore = this.currentScore + die.getValue();

@@ -14,12 +14,10 @@ public class Thrower implements ActionListener {
     
     GameWindow game;
     GameState humanState;
-    GameState computerState;
     
-    public Thrower(GameWindow game, GameState humanState, GameState computerState) {
+    public Thrower(GameWindow game, GameState humanState) {
         this.game = game;
-        this.humanState = humanState;
-        this.computerState = computerState;        
+        this.humanState = humanState;      
     }
 
     /**
@@ -30,7 +28,6 @@ public class Thrower implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         humanState.rollDice();
-        computerState.rollDice();
         game.refreshInterface();
     }  
 }
