@@ -37,6 +37,7 @@ public class ComputerPlayer {
                 window.refreshInterface();
             }
         }
+        computerState.updateCurrentScore();
     }
 
     /** Instructs the game to keep only the dice with given indexes. */

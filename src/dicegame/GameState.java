@@ -58,12 +58,6 @@ public class GameState {
     public void rollDice() {
         Die[] newRoll = new Dice().roll();
         
-        if (howManyRolls == 0) {  // If it's the first roll of the human,
-            if (computer != null) {
-                computer.rollDice();  // the computer also rolls the dice.
-            }
-        }
-        
         if (howManyRolls < MAXROLLS) {
             for (int i = 0; i < newRoll.length; i++) {
                 if (isDiceKept(i) == false) {
@@ -127,5 +121,12 @@ public class GameState {
      */
     public void dontKeepDice(int dieIndex) {
         this.keepDecision[dieIndex] = false;
+    }
+    
+    public boolean alreadyRolled() {
+        if (howManyRolls > 0) {
+            return true;
+        }
+        return false;
     }
 }

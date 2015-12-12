@@ -20,9 +20,11 @@ public class GameWindow {
     
     JCheckBox[] humanCheckBoxes = new JCheckBox[5];
     JCheckBox[] computerCheckBoxes = new JCheckBox[5];
+    
+    ComputerPlayer computer;
 
     GameWindow() {
-        ComputerPlayer computer = new ComputerPlayer(computerState, this);
+        computer = new ComputerPlayer(computerState, this);
         humanState.setComputer(computer);
     }
 
@@ -109,7 +111,7 @@ public class GameWindow {
         //adding the throw button
         JButton throwButton = new JButton("Throw dice");
         buttons.add(throwButton);
-        throwButton.addActionListener(new Thrower(this, humanState));
+        throwButton.addActionListener(new Thrower(this, humanState, computer));
         
         //adding the score button
         JButton scoreButton = new JButton("Score displayed points");
