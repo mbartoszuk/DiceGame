@@ -10,27 +10,17 @@ import javax.swing.*;
 
 public class DiceGame {
     
-    EventQueue events = new EventQueue();
     JLabel[] humanDice = new JLabel[5];
     JLabel[] computerDice = new JLabel[5];
+    JLabel humanTotalScore;
+    JLabel computerTotalScore;
+    
+    GameState humanState = new GameState();
+    GameState computerState = new GameState();
 
     public static void main(String[] args) {
         
         DiceGame game = new DiceGame();
-        game.events.subscribe(new Observer(){
-
-            @Override
-            public boolean canHandle(Object event) {
-                return event instanceof DieKeptEvent;
-            }
-
-            @Override
-            public void handle(Object event) {
-                DieKeptEvent e = (DieKeptEvent) event;
-                System.out.println(e.player + " " + e.dieNumber);
-            }
-            
-        });
         
         JFrame mainFrame = new JFrame("Dice Game");
         JPanel mainPanel = game.makeMainPanel();
@@ -118,11 +108,12 @@ public class DiceGame {
         //adding the throw button
         JButton throwButton = new JButton("Throw dice");
         buttons.add(throwButton);
-        throwButton.addActionListener(new Thrower(this, new Dice()));
+        throwButton.addActionListener(new Thrower(this, humanState, computerState));
         
         //adding the score button
         JButton scoreButton = new JButton("Score displayed points");
         buttons.add(scoreButton);
+        scoreButton.addActionListener(new ScoreUpdate(this, humanState, computerState));
         
         JPanel aside = new JPanel();
         aside.setLayout(new BorderLayout());
@@ -158,6 +149,12 @@ public class DiceGame {
         row.add(dieLayout);
         row.add(totalPlayerScoreContainer);
         
+        if (player == Player.HUMAN) {
+            humanTotalScore = totalPlayerScore;
+        } else {
+            computerTotalScore = totalPlayerScore;
+        }
+        
         return row;
         
     }
@@ -189,7 +186,7 @@ public class DiceGame {
         
     }
     
-    public void setDieFaces(Die[] rolledFaces, Player player) {
+    private void setDieFaces(Die[] rolledFaces, Player player) {
         
         for (int i = 0; i < 5; i++) {
             JLabel rolledDieNumber;
@@ -204,5 +201,19 @@ public class DiceGame {
             rolledDieNumber.setIcon(rolledDieImage);
         }
         
+    }
+
+    /** Making the interface look like the current state of the game. */
+    public void refreshInterface() {
+        
+        this.setDieFaces(humanState.getCurrentDice(), Player.HUMAN);
+        this.setDieFaces(computerState.getCurrentDice(), Player.COMPUTER);
+        
+        int currentScoreHuman = humanState.getCurrentScore();
+        int currentScoreComputer = computerState.getCurrentScore();
+        
+        this.humanTotalScore.setText("Total score: " + currentScoreHuman + " points");
+        this.computerTotalScore.setText("Total score: " + currentScoreComputer + " points");
+ 
     }
 }

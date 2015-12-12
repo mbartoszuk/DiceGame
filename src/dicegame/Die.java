@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 public class Die implements DieIntf, Comparable<DieIntf> {
     
     ImageIcon dieFace;
+    int dieValue;
 
     @Override
     public ImageIcon getDieImage() {
@@ -22,12 +23,12 @@ public class Die implements DieIntf, Comparable<DieIntf> {
 
     @Override
     public void setValue(int v) {
-        
+        this.dieValue = v;
     }
 
     @Override
     public int getValue() {
-        return 0;
+        return dieValue;
     }
 
     @Override

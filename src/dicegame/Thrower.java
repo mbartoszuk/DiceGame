@@ -10,22 +10,26 @@ import java.awt.event.ActionListener;
 public class Thrower implements ActionListener {
     
     DiceGame game;
-    Dice dice;
+    GameState humanState;
+    GameState computerState;
     
-    public Thrower(DiceGame game, Dice dice) {
+    public Thrower(DiceGame game, GameState humanState, GameState computerState) {
         
         this.game = game;
-        this.dice = dice;
+        this.humanState = humanState;
+        this.computerState = computerState;
         
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         
+        Dice dice = new Dice();
         Die[] humanRolledDice = dice.roll();
-        game.setDieFaces(humanRolledDice, Player.HUMAN);
+        humanState.setCurrentDice(humanRolledDice);
         Die[] computerRolledDice = dice.roll();
-        game.setDieFaces(computerRolledDice, Player.COMPUTER);
+        computerState.setCurrentDice(computerRolledDice);
+        game.refreshInterface();
         
     }
     
