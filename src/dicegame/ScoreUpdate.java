@@ -29,8 +29,6 @@ public class ScoreUpdate implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         this.humanState.updateCurrentScore();
-        this.computerState.updateCurrentScore();
-        
         this.game.refreshInterface();
     }
 }

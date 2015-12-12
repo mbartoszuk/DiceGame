@@ -11,10 +11,11 @@ package dicegame;
 public class GameState {
     
     /** How many rolls are allowed (first roll + re-rolls) in a single turn. */
-    public static final int MAXROLLS = 3;
+    public static final int MAXROLLS_DURING_GAME = 3;
+    public static final int MAXROLLS_WHEN_TIE = 1;
     
     /** Current score of the player tracked by this state. */
-    int currentScore = 0;
+    int currentScore = 111;
     
     /** Which die faces the player has displayed at the moment. */
     Die[] currentDice = new Die[Dice.DICENUMBER];
@@ -24,6 +25,9 @@ public class GameState {
      * in the current turn.
      */
     int howManyRolls = 0;
+    
+    /** How many rolls (including re-rolls) each player has. */
+    int maxRolls = MAXROLLS_DURING_GAME;
     
     /**
      * Whether to keep a die face during next re-rolls or not.
@@ -58,7 +62,7 @@ public class GameState {
     public void rollDice() {
         Die[] newRoll = new Dice().roll();
         
-        if (howManyRolls < MAXROLLS) {
+        if (howManyRolls < getMaxRolls()) {
             for (int i = 0; i < newRoll.length; i++) {
                 if (isDiceKept(i) == false) {
                     this.currentDice[i] = newRoll[i];
@@ -66,7 +70,7 @@ public class GameState {
             }
             this.howManyRolls = howManyRolls + 1;
             
-            if (howManyRolls == MAXROLLS) {
+            if (howManyRolls == getMaxRolls()) {
                 this.updateCurrentScore();
             }
         }
@@ -83,11 +87,11 @@ public class GameState {
      * Updates the current score by the new dice values.
      */
     public void updateCurrentScore() {
-        if (computer != null) {
-            computer.completeTurn();
-        }
-        
         if (howManyRolls > 0) {
+            if (computer != null) {
+                computer.completeTurn();
+            }
+        
             for(Die die : currentDice) {
                 this.currentScore = this.currentScore + die.getValue();
             }
@@ -128,5 +132,13 @@ public class GameState {
             return true;
         }
         return false;
+    }
+    
+    public int getMaxRolls() {
+        return maxRolls;
+    }
+    
+    public void tie() {
+        this.maxRolls = MAXROLLS_WHEN_TIE;
     }
 }

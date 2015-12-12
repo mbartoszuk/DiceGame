@@ -29,7 +29,7 @@ public class ComputerPlayer {
      */
     public void completeTurn() {
         // rollNumber starts with 1 because we have already rolled once.
-        for (int rollNumber = 1; rollNumber < GameState.MAXROLLS; rollNumber++) {
+        for (int rollNumber = 1; rollNumber < computerState.getMaxRolls(); rollNumber++) {
             if (shouldReroll()) {
                 ArrayList<Integer> toKeep = diceToKeep();
                 keepOnly(toKeep);

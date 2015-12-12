@@ -21,7 +21,11 @@ public class GameWindow {
     JCheckBox[] humanCheckBoxes = new JCheckBox[5];
     JCheckBox[] computerCheckBoxes = new JCheckBox[5];
     
+    JFrame mainFrame;
+    
     ComputerPlayer computer;
+    
+    ScoreTracker tracker = new ScoreTracker(humanState, computerState);
 
     GameWindow() {
         computer = new ComputerPlayer(computerState, this);
@@ -30,9 +34,12 @@ public class GameWindow {
 
     public static void main(String[] args) {
         GameWindow game = new GameWindow();
-        
-        JFrame mainFrame = new JFrame("Dice Game");
-        JPanel mainPanel = game.makeMainPanel();
+        game.showFrame();
+    }
+    
+    private void showFrame() {
+        mainFrame = new JFrame("Dice Game");
+        JPanel mainPanel = this.makeMainPanel();
         mainFrame.setContentPane(mainPanel);
         
         mainFrame.addWindowListener(new WindowClosesApplication());
@@ -213,6 +220,15 @@ public class GameWindow {
             boolean checked = humanState.isDiceKept(i);
             JCheckBox checkbox = humanCheckBoxes[i];
             checkbox.setSelected(checked);
+        }
+        
+        this.tracker.updatePoints();
+        Player winner = this.tracker.getWinner();
+        if (winner == Player.HUMAN) {
+            JOptionPane.showMessageDialog(mainFrame, "You win!");
+        }
+        if (winner == Player.COMPUTER) {
+            JOptionPane.showMessageDialog(mainFrame, "You loose.");
         }
     }
     
