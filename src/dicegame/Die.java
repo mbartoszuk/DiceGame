@@ -9,6 +9,12 @@ import javax.swing.ImageIcon;
 public class Die implements DieIntf, Comparable<DieIntf> {
     
     public static final int FACESNUMBER = 6;  // Each die has 6 faces
+    public static final Die BLANKDIE = new Die();
+    
+    static {
+        BLANKDIE.setValue(0);
+        BLANKDIE.setDieImage(new ImageIcon(Die.class.getResource("/dieBlank.png")));
+    }
     
     ImageIcon dieFace;
     int dieValue;

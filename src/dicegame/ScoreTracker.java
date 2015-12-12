@@ -4,7 +4,7 @@ package dicegame;
  * @author Maria Bartoszuk, w1510769
  */
 
-public class ScoreTracker {
+public class ScoreTracker implements Reseter {
     
     GameState human;
     GameState computer;
@@ -34,5 +34,11 @@ public class ScoreTracker {
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public void reset() {
+        this.humanScore = 0;
+        this.computerScore = 0;
     }
 }

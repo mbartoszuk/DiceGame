@@ -8,14 +8,14 @@ package dicegame;
  * Represents state of the game for a single player and contains all the logic
  * (game rules) for state changes (rolls, re-rolls, keeping the dice, etc).
  */
-public class GameState {
+public class GameState implements Reseter {
     
     /** How many rolls are allowed (first roll + re-rolls) in a single turn. */
     public static final int MAXROLLS_DURING_GAME = 3;
     public static final int MAXROLLS_WHEN_TIE = 1;
     
     /** Current score of the player tracked by this state. */
-    int currentScore = 111;
+    int currentScore = 0;
     
     /** Which die faces the player has displayed at the moment. */
     Die[] currentDice = new Die[Dice.DICENUMBER];
@@ -140,5 +140,18 @@ public class GameState {
     
     public void tie() {
         this.maxRolls = MAXROLLS_WHEN_TIE;
+    }
+    
+    @Override
+    public void reset() {
+        this.currentScore = 0;
+        for (int i = 0; i < currentDice.length; i++) {
+            currentDice[i] = Die.BLANKDIE;
+        }
+        this.howManyRolls = 0;
+        this.maxRolls = MAXROLLS_DURING_GAME;
+        for (int i = 0; i < keepDecision.length; i++) {
+            keepDecision[i] = false;
+        }
     }
 }

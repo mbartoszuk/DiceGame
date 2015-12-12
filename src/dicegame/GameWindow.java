@@ -8,7 +8,7 @@ import javax.swing.*;
  * @author Maria Bartoszuk, w1510769
  */
 
-public class GameWindow {
+public class GameWindow implements Reseter {
     
     JLabel[] humanDice = new JLabel[5];
     JLabel[] computerDice = new JLabel[5];
@@ -133,6 +133,7 @@ public class GameWindow {
         //adding the new game button
         JButton newGameButton = new JButton("Start new game");
         aside.add(newGameButton, "South");
+        newGameButton.addActionListener(new ResetGame(new Reseter[]{tracker, humanState, computerState, this}));
         
         return aside;
     }
@@ -193,7 +194,7 @@ public class GameWindow {
         } else {
             computerDice[dieNumber] = singleDie;
         }
-        singleDie.setIcon(new ImageIcon(GameWindow.class.getResource("/die1.png")));
+        singleDie.setIcon(Die.BLANKDIE.getDieImage());
         JPanel dieContainer = new JPanel();
         dieContainer.setLayout(new FlowLayout());
         dieContainer.add(singleDie);
@@ -245,5 +246,10 @@ public class GameWindow {
             ImageIcon rolledDieImage = rolledDieFace.getDieImage();
             rolledDieNumber.setIcon(rolledDieImage);
         } 
+    }
+
+    @Override
+    public void reset() {
+        this.refreshInterface();
     }
 }
